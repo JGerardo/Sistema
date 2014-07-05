@@ -1,0 +1,41 @@
+<h1>Lista de Clientes</h1>
+
+<table id="clients" class="display">
+  <thead>
+    <tr>
+      <th>Nombre</th>
+      <th>Telefono</th>
+      <th>Direccion</th>
+      <th>E mail</th>
+      <th>Facebook</th>
+      <th></th>
+    </tr>
+  </thead>
+  <tbody>
+    <% @clients.each do |client| %>
+      <tr>
+        <td><%= link_to(client.nombre, client) %></td>
+        <td><%= client.telefono %></td>
+        <td><%= client.direccion %></td>
+        <td><%= client.e_mail %></td>
+        <td><%= client.facebook %></td>
+           <td>
+          <%= link_to t('.Editar', :default => t("helpers.links.Editar")),
+                      edit_client_path(client), :class => 'btn btn-mini' %>
+          <%= link_to t('.Eliminar', :default => t("helpers.links.Eliminar")),
+                      client_path(client),
+                      :method => :delete,
+                      :data => { :confirm => t('.confirm', :default => t("helpers.links.confirm", :default => 'Are you sure?')) },
+                      :class => 'btn btn-mini' %>
+        </td>
+      </tr>
+      </tr>
+    <% end %>
+  </tbody>
+</table>
+
+<br>
+<%= link_to t('.Nuevo Cliente', :default => t("helpers.links.Nuevo Cliente")),
+            new_client_path,
+            :class => 'btn btn-primary' %>
+
