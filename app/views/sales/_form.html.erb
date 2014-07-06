@@ -1,0 +1,90 @@
+<%= form_for @sale, :html => { :class => 'form-horizontal' } do |f| %>
+<% if @sale.errors.any? %>
+    <div id="error_explanation">
+      <h2><%= pluralize(@sale.errors.count, "error") %> prohibited this sale from being saved:</h2>
+
+      <ul>
+      <% @sale.errors.full_messages.each do |message| %>
+        <li><%= message %></li>
+      <% end %>
+      </ul>
+    </div>
+  <% end %>
+
+<div id="datosClient">  
+  <fieldset>
+  <legend>Datos del cliente</legend>    
+    <%= f.text_field :client_id%>
+    <%= fields_for @sale.client do |c| %>
+      <%= c.hidden_field :id %>
+        <%= c.autocomplete_field :nombre, autocomplete_client_nombre_clients_path, :placeholder => "Nombre del cliente", :multiple => false, :update_elements => {:telefono => '#client_telefono', :direccion => '#client_direccion', :e_mail => "#client_e_mail", :facebook => '#client_facebook', :twitter => '#client_twitter', :liked_in => '#client_liked_in'} %>
+        <%= c.text_field :telefono, :placeholder => "Teléfono del cliente" %>
+        <%= c.text_field :direccion, :placeholder => "Domicilio" %>
+        <%= c.text_field :e_mail, :placeholder => "Email del cliente" %>
+        <%= c.text_field :facebook, :placeholder => "Facebook del cliente" %>
+        <%= c.text_field :twitter, :placeholder => "Twitter del cliente" %>
+        <%= c.text_field :liked_in, :placeholder => "Lynkedin del cliente" %>
+    <% end %>
+  </fieldset>
+</div>
+
+<div id="detallesVentaContainer">
+    <div id="agregarProductoContainer">
+    <span>
+        ISBN del libro: <input type="text" name="clavelibro" id="clavelibro" placeholder="Clave del libro"/>        
+      </span>
+      <p>% de descuento por libro
+        <input type="number" name="descuentolibro" id="descuentolibro" value="0" onkeypress="validaNumeros()" min="0" max="20" maxlength="2" >
+      </p> 
+      <span>
+        Cantidad de ejemplares: <input type="number" name="cantidadlibro" id="cantidadlibro" placeholder="Cantidad" value="1">
+      </span> 
+</div>
+    <%# Crear la tabla donde agregaremos los productos %>
+
+  <table id="detallesVentaTable" cellspacing="0">
+    <thead>
+      <th>ISBN</th>
+      <th>Descripcion  </th>
+      <th>Cantidad</th>
+      <th>P. Unidad</th>
+      <th>Descuento del Libro</th>
+      <th>Importe total</th>
+    </thead>
+      <tbody>      
+        <% @sale.saleDetails.each do |item| %>
+          <%= f.fields_for :saleDetails, item do |d| %>
+            <tr>
+              <td><%= d.text_field :book_id, :class =>"idLibroVender" %></td>
+              <td><input type="text" value="<%= item.book.titulo %>"></td>        
+              <td><%= d.text_field :cantidad, :class =>"cantidadLibro", :readonly => "readonly" %></td>
+              <td><%= d.text_field :precio, :class => "precioLibro", :readonly => "readonly" %></td>
+              <td><%= d.text_field :descuento, :class =>"descuentoProducto", :readonly => "readonly" %></td>
+              <td><%= d.text_field :total, :class =>"importeTotal", :readonly => "readonly" %></td>        
+            </tr>
+          <% end %>
+        <% end %>
+    </tbody>
+    <tfoot>
+      <th colspan="2">Total de artículos:</th>
+      <th id="totalArts">0</th>
+      <th></th>
+      <th>Importe total:</th>
+      <th id="importeTotalVenta">0</th>
+    </tfoot>
+  </table>
+</div>
+
+  <div class="field">
+    <%= f.label :fecha %><br>
+    <%= f.date_select :fecha %>
+  </div>
+  
+<div class="form-actions">
+    <%#= f.submit nil, :class => 'btn btn-primary' %>
+    <button name="guardarVenta" id="guardarVenta" type="button" class="btn btn-primary">Registrar venta</button>
+    <%= link_to t('.cancel', :default => t("helpers.links.cancel")), sales_path, :class => 'btn' %>
+  </div>
+  
+<% end %>
+
